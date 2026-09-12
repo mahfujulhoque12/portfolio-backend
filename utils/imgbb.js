@@ -17,25 +17,23 @@ export const uploadToImgBB = async (fileBuffer) => {
 
     const base64Image = fileBuffer.toString("base64");
 
-    console.log("ImgBB upload started...");
-    console.log("API key exists:", Boolean(apiKey));
-    console.log("Image buffer size:", fileBuffer.length);
+    // URLSearchParams ব্যবহার করে payload তৈরি করা
+    const formData = new URLSearchParams();
+    formData.append("key", apiKey);
+    formData.append("image", base64Image);
 
-    const response = await axios.post("https://api.imgbb.com/1/upload", null, {
-      params: {
-        key: apiKey,
-        image: base64Image,
+    const response = await axios.post(
+      "https://api.imgbb.com/1/upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        },
+        timeout: 60000,
       },
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "Mozilla/5.0",
-      },
-      timeout: 60000,
-      maxContentLength: Infinity,
-      maxBodyLength: Infinity,
-    });
-
-    console.log("ImgBB response:", response.data);
+    );
 
     if (!response.data?.success) {
       throw new Error(response.data?.error?.message || "ImgBB upload failed");
@@ -48,13 +46,9 @@ export const uploadToImgBB = async (fileBuffer) => {
     };
   } catch (error) {
     console.error("========== ImgBB ERROR ==========");
-
     console.error("Status:", error.response?.status);
-
     console.error("Response:", error.response?.data);
-
     console.error("Message:", error.message);
-
     console.error("================================");
 
     throw new Error(
