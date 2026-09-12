@@ -117,11 +117,11 @@ export const getProjects = async (req, res) => {
       projects,
     });
   } catch (error) {
-    console.error("Get projects error:", error);
+    console.error("PROJECT ADD ERROR:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch projects",
+      message: error.message || "Failed to add project",
     });
   }
 };
